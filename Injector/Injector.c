@@ -1,5 +1,11 @@
 #include "Injector.h"
+
+
 #include <TlHelp32.h>
+#include <stdbool.h>
+
+#include "Shared.h"
+#include "Filesystem.h"
 
 DWORD_PTR GetModuleBaseAddress(DWORD procId, const char* moduleName) {
 
@@ -35,7 +41,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
 {
 	char window_title[MAX_PATH];
 
-	INJECT_PARAMS* params = (INJECT_PARAMS*)lParam;
+	LPINJECT_PARAMS params = (LPINJECT_PARAMS)lParam;
 	if (!params->target_window)
 	{
 		printf("No target window provided.\n");
@@ -58,12 +64,12 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
 	return TRUE;
 }
 
-void find_process_id(INJECT_PARAMS* params)
+void find_process_id(LPINJECT_PARAMS params)
 {
 	EnumWindows(&EnumWindowsProc, (LPARAM)params);
 }
 
-DWORD WINAPI Inject(INJECT_PARAMS* params)
+DWORD WINAPI Inject(LPINJECT_PARAMS params, LPPAYLOAD_PARAMS payload_params)
 {
 	if (!params->dwProcId)
 	{
@@ -71,7 +77,7 @@ DWORD WINAPI Inject(INJECT_PARAMS* params)
 		if (!params->dwProcId)
 		{
 			PRINT_LAST_ERROR("Failed to find process id.");
-			printf("could not find process id for window: %s, executable target: %s", params->target_window, params->target_process_executable);
+			printf("could not find process id for window: %s", params->target_window);
 			return 0;
 		}
 	}
@@ -100,18 +106,51 @@ DWORD WINAPI Inject(INJECT_PARAMS* params)
 	if (!params->payload_file_path)
 	{
 		PRINT_LAST_ERROR("No file path for the payload provided.");
+		CloseHandle(hProc);
 		return 0;
 	}
 
-	FILE* f = fopen(params->payload_file_path, "r");
-	if (!f)
+	if (!check_file_exists(params->payload_file_path))
 	{
 		printf("Unable to open payload file %s. Make sure it exists at the given path.\n", params->payload_file_path);
+		CloseHandle(hProc);
 		return 0;
 	}
 
-	fclose(f);
+	if (!check_file_exists(params->mod_file))
+	{
+		printf("Unable to open mod file %s. Make sure it exists at the given path.\n", params->mod_file);
+		CloseHandle(hProc);
+		return 0;
+	}
 
+	size_t buf_len;
+	char* buf = read_file(params->mod_file, &buf_len);
+	if (!buf)
+	{
+		PRINT_LAST_ERROR("Failed to read mod file.");
+		CloseHandle(hProc);
+		free(buf);
+		return 0;
+	}
+
+	if (!PublishFile(buf, buf_len, MOD_FILE_LOC))
+	{
+		PRINT_LAST_ERROR("Failed to publish mod file.");
+		CloseHandle(hProc);
+		free(buf);
+		return 0;
+	}
+
+	if (!PublishFile(payload_params->main_class, strlen(payload_params->main_class) + 1, MAIN_CLASS_LOC))
+	{
+		PRINT_LAST_ERROR("Failed to publish payload parameters.");
+		CloseHandle(hProc);
+		free(buf);
+		return 0;
+	}
+
+	// Write the payload path to the target memory
 	LPVOID lpRemoteMem = VirtualAllocEx(
 		hProc,
 		NULL,
@@ -124,6 +163,7 @@ DWORD WINAPI Inject(INJECT_PARAMS* params)
 	{
 		PRINT_LAST_ERROR("Failed to allocate memory in target process.");
 		CloseHandle(hProc);
+		free(buf);
 		return 0;
 	}
 
@@ -139,6 +179,7 @@ DWORD WINAPI Inject(INJECT_PARAMS* params)
 	{
 		PRINT_LAST_ERROR("Failed to write memory in target process.");
 		CloseHandle(hProc);
+		free(buf);
 		return 0;
 	}
 
@@ -156,6 +197,7 @@ DWORD WINAPI Inject(INJECT_PARAMS* params)
 	{
 		PRINT_LAST_ERROR("Failed to create remote thread.");
 		CloseHandle(hProc);
+		free(buf);
 		return 0;
 	}
 
@@ -164,9 +206,10 @@ DWORD WINAPI Inject(INJECT_PARAMS* params)
 	if (!VirtualFreeEx(hProc, lpRemoteMem, 0, MEM_RELEASE))
 	{
 		PRINT_LAST_ERROR("Failed to free memory in target process.");
-		CloseHandle(hThread);
 		CloseHandle(hProc);
-		return 0;
+		CloseHandle(hThread);
+		free(buf);
+ 		return 0;
 	}
 
 	CloseHandle(hProc);
