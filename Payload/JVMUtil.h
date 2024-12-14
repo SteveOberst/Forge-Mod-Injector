@@ -11,4 +11,6 @@ jbyteArray convert_char_to_jbyte_array(JNIEnv* env, const char* buffer, size_t s
 
 bool jentry_is_directory(JNIEnv* env, jobject jar_entry);
 
+bool clear_exception(JNIEnv* env);
+
 void print_exception_stack_trace(JNIEnv* env);

@@ -49,6 +49,16 @@ bool jentry_is_directory(JNIEnv* env, jobject jar_entry)
 	return env->CallBooleanMethod(jar_entry, is_directory_method);
 }
 
+bool clear_exception(JNIEnv* env) {
+    jthrowable exception = env->ExceptionOccurred();
+    if (exception != NULL) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+    }
+
+    return exception != NULL;
+}
+
 void print_exception_stack_trace(JNIEnv* env) 
 {
     jthrowable exception = env->ExceptionOccurred();

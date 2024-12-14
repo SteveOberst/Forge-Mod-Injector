@@ -3,7 +3,7 @@
 #include "jni.h"
 #include "jvmti.h"
 
-// not fully implemented yet
+// not implemented yet
 TEST(Tests, JarTraversalTest) {
     JavaVM* jvm;
     JNIEnv* env;
@@ -19,5 +19,5 @@ TEST(Tests, JarTraversalTest) {
 
 	JarTraversalContext context;
 	
-	jar_traversal_init(nullptr, nullptr);
+	//jar_traversal_init(nullptr, nullptr);
 }

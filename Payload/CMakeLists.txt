@@ -1,5 +1,5 @@
 ﻿# Set the library to be a shared library (DLL)
-add_library(Payload SHARED Payload.cpp "Payload.h" "JarTraversal.cpp" "JarTraversal.h" "Defs.h" "StringUtil.cpp" "StringUtil.h" "JVMUtil.cpp" "JVMUtil.h"   )
+add_library(Payload SHARED Payload.cpp "Payload.h" "JarTraversal.cpp" "JarTraversal.h" "Defs.h" "StringUtil.cpp" "StringUtil.h" "JVMUtil.cpp" "JVMUtil.h"    "ForgeLoader.h" "ForgeLoader.cpp" "Util.cpp" "Util.h")
 
 find_package(JNI REQUIRED)
 

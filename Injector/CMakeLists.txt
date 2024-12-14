@@ -1,6 +1,6 @@
 ﻿
 include(FetchContent)
-add_executable (Injector "Entry.c" "Entry.h" "Injector.h" "Injector.c"  "Filesystem.h" "Filesystem.c") 
+add_executable (Injector "Entry.c"  "Injector.h" "Injector.c"  "Filesystem.h" "Filesystem.c") 
 
 set(MANIFEST_FILE "${CMAKE_SOURCE_DIR}/Injector/resources/Injector.manifest")
 
@@ -24,6 +24,9 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/cofyc/argparse.git
     GIT_TAG v1.1.0
 )
+
+set(ARGPARSE_SHARED OFF CACHE BOOL "" FORCE)
+set(ARGPARSE_STATIC ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(argparse)
 

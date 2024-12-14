@@ -12,6 +12,15 @@ typedef struct {
 	const char* target_window;
 	const char* mod_file;
 	DWORD dwProcId;
-} INJECT_PARAMS, *LPINJECT_PARAMS;
+} INJECT_PARAMS, * LPINJECT_PARAMS;
 
-DWORD WINAPI Inject(LPINJECT_PARAMS params, LPPAYLOAD_PARAMS payload_params);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+	DWORD WINAPI Inject(LPINJECT_PARAMS params, LPPAYLOAD_PARAMS payload_params);
+
+#ifdef __cplusplus
+}
+#endif

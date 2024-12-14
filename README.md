@@ -17,14 +17,22 @@ The Injector is a command-line tool that injects the Payload into the Minecraft 
 
 1. **Using the Minecraft Process ID:**
    ```bash
-   Injector.exe -p <Minecraft Process ID> -f <Payload Path>
+   Injector.exe -t <Minecraft Process ID> -p <Payload Path> -m <Mod File Path> -c <Main Class Name>
     ```
    Replace `<Minecraft Process ID>` with the PID of the Minecraft process and <Payload Path> with the full path to the DLL Payload file.
 
 2. **Using the Minecraft Window Name:**
     ```bash
-    Injector.exe -w <Minecraft Window Name> -f <Payload Path>
+    Injector.exe -w <Minecraft Window Name> -p <Payload Path> -m <Mod File Path> -c <Main Class Name>
     ```
+
+### **Parameters**
+- **-w, --target-window**: The window name to inject into (useful if you know the window name but not the process ID).
+- **-t, --target-pid**: The Minecraft process ID to inject into (useful if you know the PID).
+- **-p, --payload**: The path to the DLL Payload file to inject.
+- **-m, --mod-file**: The path to the mod file to inject.
+- **-c, --main-class**: The name of the mod's main class. **Important:** The mod's main class must implement a `void initialize()` method, which will be called when the mod is injected into Minecraft.
+
 
 ### Payload
 The Payload is a DLL that gets injected into Minecraft by the Injector. It hooks into the JVM running the game and loads the Forge mod into the Minecraft environment.
