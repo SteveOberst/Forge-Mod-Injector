@@ -2,14 +2,16 @@
 
 A lightweight tool designed to inject Forge mods into Minecraft for educational and research purposes.
 
----
 
 ## **Overview**
 This tool consists of two main components:
 1. **Injector (Executable):** A command-line application that injects a DLL (the Payload) into the Minecraft process.
 2. **Payload (DLL):** A dynamic library that hooks into the JVM and facilitates loading the Forge mod into Minecraft.
 
----
+
+## **Supported Versions**  
+Currently tested with:  
+- **Minecraft 1.8.x**  
 
 ## **Usage**
 ### **Injector**
