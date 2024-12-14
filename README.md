@@ -27,7 +27,7 @@ The Injector is a command-line tool that injects the Payload into the Minecraft 
     ```bash
     Injector.exe -w <Minecraft Window Name> -p <Payload Path> -m <Mod File Path> -c <Main Class Name>
     ```
-
+The `<Payload Path>` and `<Mod File Path>` can be supplied as relative paths. if they're in the same directory as the executable, you may only provide the file name.
 ### **Parameters**
 - **-w, --target-window**: The window name to inject into (useful if you know the window name but not the process ID).
 - **-t, --target-pid**: The Minecraft process ID to inject into (useful if you know the PID).
