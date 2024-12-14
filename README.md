@@ -11,7 +11,7 @@ This tool consists of two main components:
 
 ## **Supported Versions**  
 Currently tested with:  
-- **Minecraft 1.8.x**  
+- **Minecraft Forge 1.8.x**  
 
 ## **Usage**
 ### **Injector**
