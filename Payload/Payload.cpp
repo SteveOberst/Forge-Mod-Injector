@@ -89,7 +89,7 @@ BOOL DLLEXPORT WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvRes
 		goto error;
 	}
 
-	const char* output_file = "C:\\Users\\baumg\\Desktop\\test.jar"; //TMP_FILE("Payload.jar");
+	const char* output_file = TMP_FILE("Payload.jar");
 	if (!output_file)
 	{
 		PRINTN("Failed to resolve temp file path");
